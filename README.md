@@ -3,7 +3,7 @@ Details of the vulnerability found in the tenda router i22 V1.0.0.3 (4687).
 
 | Firmware Name  | Firmware Version  | Download Link  |
 | -------------- | ----------------- | -------------- |
-| i22    | V1.0.0.3(4687)    | https://static.tenda.com.cn/tdcweb/download/uploadfile/i22/US_i22V1.0BR_V1.0.0.3(4687)_CN_TDC01.zip    |
+| i22    | V1.0.0.3(4687)    | https://www.tenda.com.cn/download/detail-2747.html   |
 
 
 
@@ -19,7 +19,7 @@ For easier analysis, I referred to the GoAhead 2.5 source code on https://github
 - In the websUrlParse function, the `?` in POST /goform/GetIPTV?fgHPOST/goform/SysToo allows `strchr` at `0x1b588` to get the index of the ?. Referring to the GoAhead source code, it can be seen that the information after `?` is stored in `wp->query`. ![websUrlParse](./assets/2.png) ![websUrlParse](./assets/3.png) 
 
 - **Content-Length** must be written twice.
-    - The first `Content-Length` should be `>= 1`. This is necessary to set `param_1 + 0xd8(wp->flags) |= 0x400` and call `websSetVar`  to set `CONTENT_LENGTH` value..
+    - The first `Content-Length` should be `>= 1`. This is necessary to set `param_1 + 0xd8(wp->flags) |= 0x400` and call `websSetVar`  to set `CONTENT_LENGTH` value.
     ![else_content_length](./assets/4.png)
     - The second `Content-Length` is to set `clen = 0`. It set `param_1 + 0xe0 = 0`.
 - After that, an empty line (`\r\n`) is needed to ensure the final `buf` is empty.In the `socketGets` function, reading an isolated \r\n sets `nbytes = 0`, and as a result, `*buf = 0`. The corresponding assembly location is at `0x17818`.![socketGets](./assets/5.png)
@@ -59,3 +59,5 @@ while 1:
 ##  I22 &nbsp;&nbsp; V1.0.0.3 (4687)
 ![10.png](./assets/10.png)
 
+# Discoverer
+The vulnerability was discovered by Professor Wei Zhou's team (IoTS&P Lab) from the School of Cyber Science and Engineering at Huazhong University of Science and Technology.
